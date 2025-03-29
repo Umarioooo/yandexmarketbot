@@ -13,12 +13,29 @@
         const tg = window.Telegram.WebApp;
         const params = new URLSearchParams(window.location.search);
         const accountId = params.get('account_id');
-        const token = params.get('token');
+        const oauthToken = params.get('oauth_token'); // Токен OAuth
 
-        document.getElementById('content').innerText = `
-            Аккаунт ID: ${accountId}
-            Токен: ${token}
-        `;
+        if (oauthToken) {
+            // Используем токен для авторизации
+            fetch('https://api.yandex.ru/me', {
+                method: 'GET',
+                headers: {
+                    'Authorization': `OAuth ${oauthToken}`
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                document.getElementById('content').innerText = `
+                    Добро пожаловать, ${data.login || 'Пользователь'}!
+                `;
+            })
+            .catch(error => {
+                document.getElementById('content').innerText = "Ошибка авторизации.";
+                console.error(error);
+            });
+        } else {
+            document.getElementById('content').innerText = "Токен не найден.";
+        }
 
         tg.MainButton.setText('Выйти').show();
         tg.onEvent('mainButtonClicked', () => {
