@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Управление аккаунтом</title>
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+</head>
+<body>
+    <h1>Управление аккаунтом Яндекс Маркет</h1>
+    <div id="content"></div>
+    <script>
+        const tg = window.Telegram.WebApp;
+        const params = new URLSearchParams(window.location.search);
+        const accountId = params.get('account_id');
+        const token = params.get('token');
+
+        document.getElementById('content').innerText = `
+            Аккаунт ID: ${accountId}
+            Токен: ${token}
+        `;
+
+        tg.MainButton.setText('Выйти').show();
+        tg.onEvent('mainButtonClicked', () => {
+            tg.sendData(JSON.stringify({ action: 'logout', account_id: accountId }));
+        });
+    </script>
+</body>
+</html>
